@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// update user by id check username đã tồn tại chưa
+// update user by id check username này ngoài trừ id của user đó ra có tồn tại chưa
 router.put("/:id", async (req, res) => {
   try {
     const { username, password, fullname, roleId } = req.body;
@@ -54,7 +54,10 @@ router.put("/:id", async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
-    const isExist = await User.findOne({ username });
+    const isExist = await User.findOne({
+      username,
+      _id: { $ne: req.params.id },
+    });
     if (isExist) {
       return res.status(400).send("Username already exists");
     }
@@ -72,11 +75,10 @@ router.put("/:id", async (req, res) => {
 // delete user by id
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).send("User not found");
     }
-    await user.remove();
     res.send(user);
   } catch (error) {
     res.status(500).send(error);
