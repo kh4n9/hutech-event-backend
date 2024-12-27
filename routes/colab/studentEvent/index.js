@@ -34,24 +34,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// kiểm tra xem studentId và eventId đã tồn tại ngoài id truyền vào không
 router.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { studentId, eventId, userId } = req.body;
-    const isExist = await StudentEvent.findOne({
-      studentId,
-      eventId,
-      _id: { $ne: id },
-    });
-    if (isExist) {
-      return res.status(400).send("Sinh viên đã check in");
-    }
-    const studentEvent = await StudentEvent.findByIdAndUpdate(id, {
-      studentId,
-      eventId,
-      userId,
-    });
+    const { studentId, eventId, userId, checkoutTime } = req.body;
+    const studentEvent = { studentId, eventId, userId, checkoutTime };
+    await StudentEvent.findByIdAndUpdate(req.params.id, studentEvent);
     res.status(200).send(studentEvent);
   } catch (error) {
     res.status(500).send(error.message);

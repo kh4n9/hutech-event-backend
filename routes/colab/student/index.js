@@ -35,16 +35,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Student.findByIdAndDelete(id);
-    res.status(200).send("Đã xoá sinh viên");
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 // kiểm tra xem studentCode có bị trùng với studentCode khác không
 router.put("/:id", async (req, res) => {
   try {
